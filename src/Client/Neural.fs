@@ -5,7 +5,6 @@ module Neuron =
     type Link<'a> = Neuron<'a> * float
     
     let feedForward (pack:float -> 'a) (links: Link<'a> list) msg =
-        printfn "feeding forward %f" msg 
         for (n,w) in links do 
             msg * w
             |> pack
@@ -68,7 +67,7 @@ module Network =
 
     type MasterMessage = Ask of float * float * AsyncReplyChannel<float>
 
-    let createRandom (x,y) =
+    let createRandom() =
         let activation = List.sum >> tanh
         
         let out = Neuron.output 2
@@ -92,4 +91,10 @@ module Network =
             loop() 
             )
 
-        master.PostAndReply(fun reply -> Ask (x,y,reply))
+        let ask x y = master.PostAndReply(fun reply -> Ask (x,y,reply))
+        ask
+        
+
+let n = Network.createRandom()
+
+n 1. 2.
